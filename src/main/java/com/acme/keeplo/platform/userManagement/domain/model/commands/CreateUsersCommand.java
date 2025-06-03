@@ -11,6 +11,7 @@ public record CreateUsersCommand(String email,
 
     /**
      * Validates the command inputs.
+     *
      * @throws IllegalArgumentException if any required field is null or blank
      */
     public CreateUsersCommand {
@@ -23,5 +24,5 @@ public record CreateUsersCommand(String email,
         if (profilePicture == null || profilePicture.isBlank())
             throw new IllegalArgumentException("Profile picture cannot be null or blank");
 
-}
+    }
 }

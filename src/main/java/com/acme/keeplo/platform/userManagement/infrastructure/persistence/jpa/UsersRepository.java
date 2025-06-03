@@ -16,10 +16,15 @@ public interface UsersRepository extends JpaRepository<Users, Long>{
     List<Users> findAllUsers();
 
     /**
-     * Find a User by ID.
-     * @param Id User ID
+     * Find a User by email.
+     * @param email User email
      * @return User
      */
-    Optional<Users> findUsersById(String Id);
-
+    Optional<Users> findUsersByEmail(String email);
+    /**
+     * Check if a user exists by email.
+     * @param email user email
+     * @return True if exists, false otherwise
+     */
+    boolean existsByEmail(String email);
 }
