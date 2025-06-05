@@ -8,6 +8,7 @@ package com.acme.keeplo.platform.userManagement.domain.model.aggregates;
  */
 
 import com.acme.keeplo.platform.userManagement.domain.model.commands.CreateUsersCommand;
+import com.acme.keeplo.platform.userManagement.domain.model.valueObjects.UserId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,7 +24,7 @@ public class Users extends AbstractAggregateRoot<Users>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
-    private Long UserId;
+    private UserId UserId;
 
     @Column(nullable = false)
     @Getter

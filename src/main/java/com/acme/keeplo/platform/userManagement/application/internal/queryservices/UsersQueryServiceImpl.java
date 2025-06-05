@@ -6,17 +6,21 @@ import com.acme.keeplo.platform.userManagement.domain.model.queries.GetAllUsersB
 
 import com.acme.keeplo.platform.userManagement.domain.model.queries.GetAllUsersQuery;
 
+import com.acme.keeplo.platform.userManagement.domain.model.queries.GetUserByEmailQuery;
+import com.acme.keeplo.platform.userManagement.domain.model.queries.GetUserByIdAndEmailQuery;
 import com.acme.keeplo.platform.userManagement.domain.services.UsersQueryService;
 
 import com.acme.keeplo.platform.userManagement.infrastructure.persistence.jpa.UsersRepository;
 
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
+
+@Service
 public class UsersQueryServiceImpl implements UsersQueryService{
 
     private final UsersRepository usersRepository;
@@ -28,9 +32,10 @@ public class UsersQueryServiceImpl implements UsersQueryService{
     /**
      * {@inheritDoc}
      */
+    @NonNull
     @Override
     public List<Users> handle(GetAllUsersQuery query) {
-        return usersRepository.findAllUsers();
+        return usersRepository.findAll();
     }
 
     /**
@@ -39,6 +44,16 @@ public class UsersQueryServiceImpl implements UsersQueryService{
     @Override
     public Optional<Users> handle(GetAllUsersByIdQuery query) {
         return usersRepository.findById(query.id());
+    }
+
+    @Override
+    public Optional<Users> handle(GetUserByEmailQuery query) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Users> handle(GetUserByIdAndEmailQuery query) {
+        return Optional.empty();
     }
 
 }

@@ -5,6 +5,8 @@ import com.acme.keeplo.platform.userManagement.domain.model.aggregates.Users;
 import com.acme.keeplo.platform.userManagement.domain.model.queries.GetAllUsersByIdQuery;
 
 import com.acme.keeplo.platform.userManagement.domain.model.queries.GetAllUsersQuery;
+import com.acme.keeplo.platform.userManagement.domain.model.queries.GetUserByEmailQuery;
+import com.acme.keeplo.platform.userManagement.domain.model.queries.GetUserByIdAndEmailQuery;
 
 import java.util.List;
 
@@ -35,5 +37,9 @@ public interface UsersQueryService {
      * @see GetAllUsersByIdQuery
      */
     Optional<Users> handle(GetAllUsersByIdQuery query);
+
+    Optional<Users> handle(GetUserByEmailQuery query);
+
+    Optional<Users> handle(GetUserByIdAndEmailQuery query);
   }
 
