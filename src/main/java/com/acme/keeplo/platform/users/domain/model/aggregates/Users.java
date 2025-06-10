@@ -7,10 +7,13 @@ package com.acme.keeplo.platform.users.domain.model.aggregates;
  * It is responsible for handling the CreateUsers command.
  */
 
+import com.acme.keeplo.platform.subscription.domain.model.entity.Memberships;
+import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
 import com.acme.keeplo.platform.users.domain.model.commands.CreateUsersCommand;
 import com.acme.keeplo.platform.users.domain.model.valueObjects.UserId;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,7 +23,7 @@ public class Users extends AbstractAggregateRoot<Users>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
-    private UserId UserId;
+    private Long id;
 
     @Column(nullable = false)
     @Getter
@@ -38,6 +41,17 @@ public class Users extends AbstractAggregateRoot<Users>{
     @Getter
     private String profilePicture;
 
+    @Setter
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "membership_id")
+    private Memberships membership;
+
+    @Setter
+    @ManyToOne
+    @Getter
+    @JoinColumn(name = "payment_card_id")
+    private PaymentCard paymentCard;
 
     protected Users() {}
 
