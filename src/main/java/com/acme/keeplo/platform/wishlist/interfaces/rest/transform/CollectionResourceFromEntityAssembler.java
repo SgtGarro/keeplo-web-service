@@ -13,7 +13,7 @@ public class CollectionResourceFromEntityAssembler {
 
     public static CollectionResource toResourceFromEntity(Collection entity) {
         return new CollectionResource(
-                entity.getId().getValue(),
+                entity.getId().toString(),
                 entity.getName(),
                 entity.getDescription(),
                 entity.isPublic()

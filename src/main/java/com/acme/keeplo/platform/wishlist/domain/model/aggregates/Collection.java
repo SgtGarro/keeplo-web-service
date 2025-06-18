@@ -30,7 +30,7 @@ public class Collection extends AuditableAbstractAggregateRoot<Collection> {
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
-        this.addDomainEvent(new CollectionCreatedEvent(this.id));
+        //this.addDomainEvent(new CollectionCreatedEvent(this.id));
     }
 
     public void updateDetails(String name, String description, boolean isPublic) {
