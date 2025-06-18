@@ -61,10 +61,10 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         }
 
         var subscription = new Subscription(membership, paymentCard);
-        subscriptionRepository.save(subscription); // ✅ primero guardas la suscripción
+        subscriptionRepository.save(subscription);
 
-        user.setSubscription(subscription); // ✅ luego la vinculas al usuario
-        userRepository.save(user); // ✅ y finalmente actualizas el usuario
+        user.setSubscription(subscription);
+        userRepository.save(user);
 
         return Optional.of(subscription);
     }
@@ -84,9 +84,9 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         }
 
         var updatedSubscription = new Subscription(membership, paymentCard);
-        subscriptionRepository.save(updatedSubscription); // ✅ guardar actualización
+        subscriptionRepository.save(updatedSubscription);
 
-        user.setSubscription(updatedSubscription); // ✅ actualizar relación
+        user.setSubscription(updatedSubscription);
         userRepository.save(user);
 
         return Optional.of(updatedSubscription);
