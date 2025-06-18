@@ -2,7 +2,7 @@ package com.acme.keeplo.platform.subscription.interfaces.rest.resources;
 
 import java.util.Date;
 
-public record PaymentCardSummaryResource(
+public record PaymentCardResource(
         Long id,
         String cardNumber,
         String holderName,

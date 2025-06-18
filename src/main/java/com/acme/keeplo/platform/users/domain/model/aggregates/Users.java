@@ -7,6 +7,7 @@ package com.acme.keeplo.platform.users.domain.model.aggregates;
  * It is responsible for handling the CreateUsers command.
  */
 
+import com.acme.keeplo.platform.subscription.domain.model.aggregates.Subscription;
 import com.acme.keeplo.platform.subscription.domain.model.entity.Memberships;
 import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
 import com.acme.keeplo.platform.users.domain.model.commands.CreateUsersCommand;
@@ -43,15 +44,10 @@ public class Users extends AbstractAggregateRoot<Users>{
 
     @Setter
     @Getter
-    @ManyToOne
-    @JoinColumn(name = "membership_id")
-    private Memberships membership;
+    @OneToOne
+    @JoinColumn(name = "subscription_id", unique = true)
+    private Subscription subscription;
 
-    @Setter
-    @ManyToOne
-    @Getter
-    @JoinColumn(name = "payment_card_id")
-    private PaymentCard paymentCard;
 
     protected Users() {}
 

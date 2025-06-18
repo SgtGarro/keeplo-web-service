@@ -22,10 +22,8 @@ public class SubscriptionQueryServiceImpl implements SubscriptionQueryService {
         var user = userRepository.findById(query.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        var membership = user.getMembership();
-        var paymentCard = user.getPaymentCard();
 
-        return Optional.of(new Subscription(membership, paymentCard, user.getId()));
+        return Optional.of(new Subscription());
     }
 
 }

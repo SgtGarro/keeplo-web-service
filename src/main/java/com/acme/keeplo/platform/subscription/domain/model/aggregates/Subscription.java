@@ -1,40 +1,54 @@
 package com.acme.keeplo.platform.subscription.domain.model.aggregates;
 /**
- * Users Aggregate Root
+ * Subscriptions Aggregate Root
  *
  * @summary
- * The Users class is an aggregate root that represents a favorite news source.
- * It is responsible for handling the CreateUsers command.
+ * The Subscriptions class is an aggregate root that represents Subscriptions.
+ * It is responsible for handling the CreateSubscriptions command.
  */
 
 import com.acme.keeplo.platform.subscription.domain.model.entity.Memberships;
 import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
 import com.acme.keeplo.platform.users.domain.model.aggregates.Users;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
-import java.util.Date;
-
+@Entity
 public class Subscription extends AbstractAggregateRoot<Subscription> {
 
-    @Getter
-    private Memberships membership;
-    @Getter
-    private PaymentCard paymentCard;
-    @Getter
-    private Long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Subscription(Memberships membership, PaymentCard paymentCard, Long userId) {
+    @Getter
+    @Setter
+    @ManyToOne
+
+    private Memberships membership;
+
+    @Getter
+    @Setter
+    @OneToOne
+    @JoinColumn(name = "payment_card_id", unique = true)
+    private PaymentCard paymentCard;
+
+
+    public Subscription() {
+    }
+    public Subscription(Memberships membership, PaymentCard paymentCard) {
         if (membership == null) throw new IllegalArgumentException("Membership cannot be null");
         if (!membership.isFree() && paymentCard == null)
             throw new IllegalArgumentException("Non-free membership requires a payment card");
 
         this.membership = membership;
         this.paymentCard = paymentCard;
-        this.userId = userId;
     }
 
-    public Subscription buildFromUser(Users user) {
-        return new Subscription(user.getMembership(), user.getPaymentCard(),user.getId());
+    public void validate() {
+        if (membership == null) throw new IllegalStateException("Membership cannot be null");
+        if (!membership.isFree() && paymentCard == null)
+            throw new IllegalStateException("Non-free membership requires a payment card");
     }
 }

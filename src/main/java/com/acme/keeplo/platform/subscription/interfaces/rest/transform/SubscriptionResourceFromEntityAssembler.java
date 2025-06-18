@@ -5,6 +5,8 @@ import com.acme.keeplo.platform.subscription.interfaces.rest.resources.Subscript
 
 public class SubscriptionResourceFromEntityAssembler {
     public static SubscriptionResource toResourceFromEntity(Subscription subscription) {
+        if (subscription == null) return null;
+
         var membershipResource =
                 MembershipResourceFromEntityAssembler.toResourceFromEntity(subscription.getMembership());
 
@@ -13,7 +15,6 @@ public class SubscriptionResourceFromEntityAssembler {
                 : null;
 
         return new SubscriptionResource(
-                subscription.getUserId(),
                 membershipResource,
                 paymentCardResource
         );

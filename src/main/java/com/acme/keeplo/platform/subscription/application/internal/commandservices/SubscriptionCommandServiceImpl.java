@@ -7,6 +7,7 @@ import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
 import com.acme.keeplo.platform.subscription.domain.services.SubscriptionCommandService;
 import com.acme.keeplo.platform.subscription.infrastructure.persistence.jpa.MembershipRepository;
 import com.acme.keeplo.platform.subscription.infrastructure.persistence.jpa.PaymentCardRepository;
+import com.acme.keeplo.platform.subscription.infrastructure.persistence.jpa.SubscriptionRepository;
 import com.acme.keeplo.platform.users.infrastructure.persistence.jpa.UsersRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +30,18 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
     private final UsersRepository userRepository;
     private final MembershipRepository membershipRepository;
     private final PaymentCardRepository paymentCardRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     public SubscriptionCommandServiceImpl(
             UsersRepository userRepository,
             MembershipRepository membershipRepository,
-            PaymentCardRepository paymentCardRepository
+            PaymentCardRepository paymentCardRepository,
+            SubscriptionRepository subscriptionRepository
     ) {
         this.userRepository = userRepository;
         this.membershipRepository = membershipRepository;
         this.paymentCardRepository = paymentCardRepository;
+        this.subscriptionRepository = subscriptionRepository;
     }
     /**
      * {@inheritDoc}
@@ -56,12 +60,11 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
                     .orElseThrow(() -> new IllegalArgumentException("Payment card not found"));
         }
 
-        user.setMembership(membership);
-        user.setPaymentCard(paymentCard);
+        var subscription = new Subscription(membership, paymentCard);
+        subscriptionRepository.save(subscription); // ✅ primero guardas la suscripción
 
-        userRepository.save(user);
-
-        var subscription = new Subscription(membership, paymentCard, user.getId());
+        user.setSubscription(subscription); // ✅ luego la vinculas al usuario
+        userRepository.save(user); // ✅ y finalmente actualizas el usuario
 
         return Optional.of(subscription);
     }
@@ -80,12 +83,11 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
                     .orElseThrow(() -> new IllegalArgumentException("Payment card not found"));
         }
 
-        user.setMembership(membership);
-        user.setPaymentCard(paymentCard);
+        var updatedSubscription = new Subscription(membership, paymentCard);
+        subscriptionRepository.save(updatedSubscription); // ✅ guardar actualización
 
+        user.setSubscription(updatedSubscription); // ✅ actualizar relación
         userRepository.save(user);
-
-        var updatedSubscription = new Subscription(membership, paymentCard, user.getId());
 
         return Optional.of(updatedSubscription);
     }
