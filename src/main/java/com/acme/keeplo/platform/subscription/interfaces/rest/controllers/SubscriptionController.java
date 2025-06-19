@@ -44,24 +44,34 @@ public class SubscriptionController {
      * Create a new subscription
      */
     @PostMapping
-    public ResponseEntity<?> createSubscription(@RequestBody CreateSubscriptionResource resource) {
+    @Operation(summary = "Create a new subscription", description = "Creates a new subscription for a user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Subscription created successfully."),
+            @ApiResponse(responseCode = "400", description = "Bad request (e.g., user/membership/card not found, user already has subscription).")
+    })
+    public ResponseEntity<SubscriptionResource> createSubscription(@RequestBody CreateSubscriptionResource resource) {
         var command = new CreateSubscriptionCommand(
+                resource.userId(), // Asegúrate del orden de los campos en el comando
                 resource.membershipId(),
-                resource.paymentCardId(),
-                resource.userId()
+                resource.paymentCardId()
         );
 
         var result = commandService.handle(command);
         return result.map(subscription ->
-                ResponseEntity.ok(SubscriptionResourceFromEntityAssembler.toResourceFromEntity(subscription))
+                new ResponseEntity<>(SubscriptionResourceFromEntityAssembler.toResourceFromEntity(subscription), CREATED)
         ).orElse(ResponseEntity.badRequest().build());
     }
 
     /**
      * Get subscription by userId
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getSubscriptionByUserId(@PathVariable Long userId) {
+    @GetMapping("/user/{userId}") // Cambiado para ser más claro que es por user id
+    @Operation(summary = "Get subscription by user ID", description = "Retrieves the subscription details for a specific user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Subscription found and returned."),
+            @ApiResponse(responseCode = "404", description = "Subscription not found for the given user ID.")
+    })
+    public ResponseEntity<SubscriptionResource> getSubscriptionByUserId(@PathVariable Long userId) {
         var query = new GetSubscriptionByUserIdQuery(userId);
         var result = queryService.handle(query);
 
@@ -74,12 +84,16 @@ public class SubscriptionController {
      * Update an existing subscription
      */
     @PutMapping("/{subscriptionId}")
-    public ResponseEntity<?> updateSubscription(@PathVariable Long subscriptionId,
-                                                @RequestBody UpdateSubscriptionResource resource) {
+    @Operation(summary = "Update an existing subscription", description = "Updates the membership or payment card of an existing subscription.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Subscription updated successfully."),
+            @ApiResponse(responseCode = "400", description = "Bad request (e.g., subscription/membership/card not found).")
+    })
+    public ResponseEntity<SubscriptionResource> updateSubscription(@PathVariable Long subscriptionId,
+                                                                   @RequestBody UpdateSubscriptionResource resource) {
         var command = new UpdateSubscriptionCommand(
                 subscriptionId,
-                resource.userId(),
-                resource.membershipId(),
+                resource.membershipId(), 
                 resource.paymentCardId()
         );
 

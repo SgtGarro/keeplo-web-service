@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    List<Subscription> findAll();
+    Optional<Subscription> findByUserId(Long userId);
 
-    Optional<Subscription> findById(Integer id);
 }

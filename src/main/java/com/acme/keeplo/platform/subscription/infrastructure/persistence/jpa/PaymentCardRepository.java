@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
+public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> { // La clave es Long
     List<PaymentCard> findAll();
-
-    Optional<PaymentCard> findById(Integer id);
+    Optional<PaymentCard> findById(Long id);
 }

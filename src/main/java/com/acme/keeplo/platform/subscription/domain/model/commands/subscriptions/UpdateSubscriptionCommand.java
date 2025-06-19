@@ -4,20 +4,16 @@ import java.util.Date;
 
 public record UpdateSubscriptionCommand(
         Long subscriptionId,
-        Long userId,
-        Long membershipId,
+        Long membershipId, // Solo se actualiza la membresía y/o la tarjeta
         Long paymentCardId
 ) {
     public UpdateSubscriptionCommand {
-        if (userId <= 0)
-            throw new IllegalArgumentException("userId must be positive.");
-        if (subscriptionId <= 0)
+        if (subscriptionId == null || subscriptionId <= 0)
             throw new IllegalArgumentException("subscriptionId must be positive.");
-        if (membershipId <= 0)
+        if (membershipId == null || membershipId <= 0)
             throw new IllegalArgumentException("membershipId must be positive.");
+        // paymentCardId puede ser nulo
         if (paymentCardId != null && paymentCardId <= 0)
             throw new IllegalArgumentException("paymentCardId must be positive if provided.");
     }
 }
-
-
