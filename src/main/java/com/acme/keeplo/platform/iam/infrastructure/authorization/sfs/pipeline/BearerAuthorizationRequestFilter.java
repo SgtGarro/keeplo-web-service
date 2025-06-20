@@ -13,7 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
+/**
+ * This filter intercepts incoming HTTP requests and extracts the Bearer token from the Authorization header.
+ * If the token is valid, it sets the corresponding authentication in the Spring Security context.
+ */
 public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
 
     private final BearerTokenService tokenService;

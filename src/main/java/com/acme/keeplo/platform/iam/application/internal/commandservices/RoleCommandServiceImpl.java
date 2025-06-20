@@ -8,15 +8,30 @@ import com.acme.keeplo.platform.iam.infrastructure.persistence.jpa.repositories.
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-
+/**
+ * Implementation of RoleCommandService.
+ * This service is responsible for handling role-related commands,
+ * specifically seeding the system with default roles if they are not already present.
+ *
+ */
 @Service
 public class RoleCommandServiceImpl implements RoleCommandService {
     private final RoleRepository roleRepository;
 
+    /**
+     * Creates an instance of RoleCommandServiceImpl with the given RoleRepository.
+     *
+     * @param roleRepository the repository for managing Role entities
+     */
     public RoleCommandServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
+    /**
+     * Seeds the default roles defined in the Roles enum if they are not already present.
+     *
+     * @param command the command containing the instruction to seed roles
+     */
     @Override
     public void handle(SeedRolesCommand command) {
         Arrays.stream(Roles.values()).forEach(role -> {

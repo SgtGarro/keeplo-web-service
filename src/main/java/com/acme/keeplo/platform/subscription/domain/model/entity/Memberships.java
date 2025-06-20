@@ -4,9 +4,15 @@ import com.acme.keeplo.platform.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-@Getter // Genera getters para todos los campos
-@Setter // Añadir @Setter si quieres usar setters para la actualización
+/**
+ * Memberships Entity
+ *
+ * Represents a subscription membership plan in the system.
+ * Each membership has a unique name, a price, and a description.
+ * This entity extends AuditableModel to include creation and update timestamps.
+ */
+@Getter
+@Setter
 @Entity
 public class Memberships extends AuditableModel {
 
@@ -14,26 +20,32 @@ public class Memberships extends AuditableModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true) // Nombre debe ser único y no nulo
-    private String name; // Cambié 'Name' a 'name' por convención de Java
+    @Column(nullable = false, unique = true)
+    private String name;
 
     @Column(nullable = false)
-    private float price; // Cambié 'Price' a 'price' por convención de Java
+    private float price;
 
     @Column(nullable = false)
-    private String description; // Cambié 'Description' a 'description' por convención de Java
+    private String description;
 
-    // Constructor vacío para JPA
+    /**
+     * Protected constructor for JPA.
+     */
     protected Memberships() {
-        // Inicializar con valores por defecto si es necesario
         this.name = "";
         this.price = 0.0f;
         this.description = "";
     }
 
-    // Constructor para crear nuevas instancias de Memberships desde el servicio de comandos
+    /**
+     * Creates a new membership with the given values.
+     *
+     * @param name the name of the membership (must not be null or blank)
+     * @param price the price of the membership (must not be negative)
+     * @param description the description of the membership (must not be null or blank)
+     */
     public Memberships(String name, float price, String description) {
-        // Validación básica, las validaciones completas deberían estar en el comando o value object
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Membership name cannot be null or empty.");
         }
@@ -48,7 +60,13 @@ public class Memberships extends AuditableModel {
         this.description = description;
     }
 
-    // Método para actualizar las propiedades de una membresía existente
+    /**
+     * Updates this membership with new values.
+     *
+     * @param name the new name (must not be null or blank)
+     * @param price the new price (must not be negative)
+     * @param description the new description (must not be null or blank)
+     */
     public void update(String name, float price, String description) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Membership name cannot be null or empty.");
@@ -64,7 +82,12 @@ public class Memberships extends AuditableModel {
         this.description = description;
     }
 
+    /**
+     * Checks if the membership is free (i.e., price is 0).
+     *
+     * @return true if the membership is free, false otherwise
+     */
     public boolean isFree() {
-        return price == 0; // Usar 'price' en minúscula
+        return price == 0;
     }
 }

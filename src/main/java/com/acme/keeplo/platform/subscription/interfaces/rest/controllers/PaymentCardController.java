@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * REST controller for managing Payment Cards.
+ * Provides endpoints to create and update user payment cards.
+ */
 @RestController
 @RequestMapping(value = "/api/v1/payment-cards", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Payment Cards", description = "Endpoints for managing payment cards")
@@ -25,12 +29,20 @@ public class PaymentCardController {
 
     private final PaymentCardCommandService paymentCardCommandService;
 
+    /**
+     * Constructs a new PaymentCardController with the required PaymentCardCommandService.
+     *
+     * @param paymentCardCommandService service handling payment card commands
+     */
     public PaymentCardController(PaymentCardCommandService paymentCardCommandService) {
         this.paymentCardCommandService = paymentCardCommandService;
     }
 
     /**
-     * Create a new payment card
+     * Creates a new payment card.
+     *
+     * @param resource the resource containing payment card data
+     * @return ResponseEntity with the created payment card resource or bad request
      */
     @PostMapping
     @Operation(summary = "Create a new payment card", description = "Creates a new payment card.")
@@ -53,6 +65,13 @@ public class PaymentCardController {
         ).orElse(ResponseEntity.badRequest().build());
     }
 
+    /**
+     * Updates an existing payment card.
+     *
+     * @param paymentCardId ID of the payment card to update
+     * @param resource      the resource containing updated payment card data
+     * @return ResponseEntity with the updated payment card resource or bad request
+     */
     @PutMapping("/{paymentCardId}")
     @Operation(summary = "Update an existing payment card", description = "Updates an existing payment card.")
     @ApiResponses(value = {

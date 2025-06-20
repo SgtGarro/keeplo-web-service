@@ -7,21 +7,33 @@ import com.acme.keeplo.platform.subscription.infrastructure.persistence.jpa.Subs
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+/**
+ * Service implementation for handling queries related to subscriptions.
+ *
+ * Provides a method to retrieve a subscription by user ID.
+ */
 @Service
 public class SubscriptionQueryServiceImpl implements SubscriptionQueryService {
 
-    private final SubscriptionRepository subscriptionRepository; // Inyecta SubscriptionRepository
-    // private final UsersRepository userRepository; // Ya no necesitas inyectar UsersRepository aquí directamente si lo buscas por ID de suscripción
+    private final SubscriptionRepository subscriptionRepository;
 
-    public SubscriptionQueryServiceImpl(SubscriptionRepository subscriptionRepository) { // Solo inyecta el repositorio que necesitas
+    /**
+     * Constructs the query service with the required subscription repository.
+     *
+     * @param subscriptionRepository subscription data access layer
+     */
+    public SubscriptionQueryServiceImpl(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
     }
 
+    /**
+     * Handles the retrieval of a subscription by the user ID.
+     *
+     * @param query the query containing the user ID
+     * @return an Optional containing the subscription if found, or empty otherwise
+     */
     @Override
     public Optional<Subscription> handle(GetSubscriptionByUserIdQuery query) {
-        // Busca directamente la suscripción por el userId en el repositorio de suscripciones
-        // Asumimos que SubscriptionRepository tiene un método findByUserId
         return subscriptionRepository.findByUserId(query.userId());
     }
 }

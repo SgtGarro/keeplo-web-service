@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service that handles user-related commands such as sign-in and sign-up.
+ * This implementation manages user authentication and registration logic.
+ */
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
@@ -22,13 +26,26 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final BCryptHashingService hashingService;
     private final BearerTokenService tokenService;
 
+    /**
+     * Creates an instance of UserCommandServiceImpl with required dependencies.
+     *
+     * @param userRepository repository for user data
+     * @param roleRepository repository for role data
+     * @param hashingService service for password hashing
+     * @param tokenService service for generating JWT tokens
+     */
     public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptHashingService hashingService, BearerTokenService tokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
     }
-
+    /**
+     * Handles the sign-in process by verifying credentials and generating a JWT token.
+     *
+     * @param command contains the username and password for sign-in
+     * @return an optional containing the authenticated user and token if successful
+     */
     @Override
     public Optional<ImmutablePair<User, String>> handle(SignInCommand command) {
         var user = userRepository.findByEmail(command.username());
@@ -45,7 +62,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         return Optional.of(ImmutablePair.of(user.get(), token));
     }
-
+    /**
+     * Handles user registration by creating a new user and assigning the default role.
+     *
+     * @param command contains the user's registration details
+     * @return the newly created user if registration is successful
+     */
     @Override
     public Optional<User> handle(SignUpCommand command) {
         if (userRepository.existsByEmail(command.email())) {

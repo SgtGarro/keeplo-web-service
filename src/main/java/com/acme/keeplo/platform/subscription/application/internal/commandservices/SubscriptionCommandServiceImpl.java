@@ -14,17 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 /**
- * SubscriptionCommandService Implementation
+ * Service that handles subscription-related command operations.
  *
- * @summary
- * Implementation of the SubscriptionCommandService interface.
- * It is responsible for handling Subscription commands.
- *
- * @since 1.0
+ * Provides the logic for creating and updating subscriptions, including validation
+ * of associated user, membership, and payment card data.
  */
-
 @Service
 public class SubscriptionCommandServiceImpl implements SubscriptionCommandService {
 
@@ -33,6 +28,14 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
     private final PaymentCardRepository paymentCardRepository;
     private final SubscriptionRepository subscriptionRepository;
 
+    /**
+     * Constructs the service with required repository dependencies.
+     *
+     * @param userRepository user data access
+     * @param membershipRepository membership data access
+     * @param paymentCardRepository payment card data access
+     * @param subscriptionRepository subscription data access
+     */
     public SubscriptionCommandServiceImpl(
             UserRepository userRepository,
             MembershipRepository membershipRepository,
@@ -45,16 +48,22 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         this.subscriptionRepository = subscriptionRepository;
     }
 
+    /**
+     * Handles creation of a new subscription.
+     *
+     * Validates user and membership existence, ensures payment card is required for non-free memberships,
+     * and verifies that the user does not already have an active subscription.
+     *
+     * @param command the command with subscription details
+     * @return the created subscription, if successful
+     */
     @Override
     public Optional<Subscription> handle(CreateSubscriptionCommand command) {
-
         var user = userRepository.findById(command.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + command.userId()));
 
-
         var membership = membershipRepository.findById(command.membershipId())
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with ID: " + command.membershipId()));
-
 
         PaymentCard paymentCard = null;
         if (!membership.isFree()) {
@@ -63,14 +72,11 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
             }
             paymentCard = paymentCardRepository.findById(command.paymentCardId())
                     .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
-
         }
-
 
         if (subscriptionRepository.findByUserId(user.getId()).isPresent()) {
             throw new IllegalStateException("User with ID " + user.getId() + " already has an active subscription.");
         }
-
 
         var subscription = new Subscription(membership, paymentCard, user);
         subscription.validateState();
@@ -80,25 +86,28 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         return Optional.of(subscription);
     }
 
+    /**
+     * Handles updating an existing subscription.
+     *
+     * Validates subscription, membership, and payment card existence, and applies the updates.
+     *
+     * @param command the command with updated subscription details
+     * @return the updated subscription, if successful
+     */
     @Override
     public Optional<Subscription> handle(UpdateSubscriptionCommand command) {
-
         var existingSubscription = subscriptionRepository.findById(command.subscriptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Subscription not found with ID: " + command.subscriptionId()));
-
 
         var newMembership = membershipRepository.findById(command.membershipId())
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with ID: " + command.membershipId()));
 
-
         PaymentCard newPaymentCard = null;
         if (command.paymentCardId() == null) {
-                throw new IllegalArgumentException("Payment card is required for non-free membership.");
+            throw new IllegalArgumentException("Payment card is required for non-free membership.");
         }
         newPaymentCard = paymentCardRepository.findById(command.paymentCardId())
                 .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
-
-
 
         existingSubscription.updateMembership(newMembership);
         existingSubscription.updatePaymentCard(newPaymentCard);
@@ -109,4 +118,3 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         return Optional.of(existingSubscription);
     }
 }
-

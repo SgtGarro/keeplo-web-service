@@ -9,10 +9,20 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/**
+ * Configuration class for OpenAPI documentation.
+ *
+ * Defines API metadata, security schemes, and external documentation references
+ * for the Keeplo Platform.
+ */
 @Configuration
 public class OpenApiConfiguration {
 
+    /**
+     * Configures the OpenAPI specification for the Keeplo Platform.
+     *
+     * @return the customized {@link OpenAPI} instance
+     */
     @Bean
     public OpenAPI keeploPlatformOpenApi() {
 

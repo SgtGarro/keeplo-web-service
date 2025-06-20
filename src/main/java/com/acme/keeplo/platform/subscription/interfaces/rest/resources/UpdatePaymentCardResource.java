@@ -1,7 +1,16 @@
 package com.acme.keeplo.platform.subscription.interfaces.rest.resources;
 
 import java.util.Date;
-
+/**
+ * Resource representing the data required to update an existing payment card.
+ * This resource is used in the request body of the update operation.
+ * It validates the presence of all required fields.
+ *
+ * @param cardNumber     the credit/debit card number
+ * @param holderName     the name of the cardholder
+ * @param expirationDate the expiration date of the card
+ * @param cvv            the CVV security code of the card
+ */
 public record UpdatePaymentCardResource(String cardNumber, String holderName, Date expirationDate, String cvv){
     public UpdatePaymentCardResource {
         if (cardNumber == null)

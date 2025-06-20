@@ -1,12 +1,19 @@
 package com.acme.keeplo.platform.iam.interfaces.rest.transform;
 
-import com.acme.keeplo.platform.iam.domain.model.commands.SignUpCommand; // Tu comando SignUpCommand
-import com.acme.keeplo.platform.iam.interfaces.rest.resources.SignUpResource; // Tu recurso SignUpResource
-// No necesitamos Role ni List<Role> aquí porque la asignación de roles se hace en el servicio
-
+import com.acme.keeplo.platform.iam.domain.model.commands.SignUpCommand;
+import com.acme.keeplo.platform.iam.interfaces.rest.resources.SignUpResource;
+/**
+ * Utility class for transforming a {@link SignUpResource}
+ * into a {@link SignUpCommand} used by the application layer.
+ */
 public class SignUpCommandFromResourceAssembler {
+    /**
+     * Converts a SignUpResource into a SignUpCommand.
+     *
+     * @param resource the resource containing sign-up data
+     * @return the command with user registration information
+     */
     public static SignUpCommand toCommandFromResource(SignUpResource resource) {
-        // Ahora usamos los campos de tu SignUpResource (email, password, name, profilePicture)
         return new SignUpCommand(resource.email(), resource.password(), resource.name(), resource.profilePicture());
     }
 }
