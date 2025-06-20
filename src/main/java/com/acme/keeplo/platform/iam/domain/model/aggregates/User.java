@@ -55,7 +55,6 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     @JoinColumn(name = "subscription_id", unique = true)
     private Subscription subscription;
 
-    // Atributos de Roles del profesor para IAM
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

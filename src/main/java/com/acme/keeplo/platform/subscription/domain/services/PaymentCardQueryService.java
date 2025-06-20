@@ -8,6 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentCardQueryService {
-    Optional<PaymentCard> handle(GetPaymentCardByIdQuery query); // Cambiado a Optional<PaymentCard>
-    // List<PaymentCard> handle(GetPaymentCardByIdQuery query); // Una query por ID debe retornar un solo elemento
-}
+    Optional<PaymentCard> handle(GetPaymentCardByIdQuery query);
+  }

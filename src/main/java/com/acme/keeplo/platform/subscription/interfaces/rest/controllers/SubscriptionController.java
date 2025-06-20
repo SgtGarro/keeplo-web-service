@@ -51,7 +51,7 @@ public class SubscriptionController {
     })
     public ResponseEntity<SubscriptionResource> createSubscription(@RequestBody CreateSubscriptionResource resource) {
         var command = new CreateSubscriptionCommand(
-                resource.userId(), // Asegúrate del orden de los campos en el comando
+                resource.userId(),
                 resource.membershipId(),
                 resource.paymentCardId()
         );

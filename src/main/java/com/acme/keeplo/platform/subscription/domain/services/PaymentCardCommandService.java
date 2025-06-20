@@ -8,6 +8,6 @@ import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
 import java.util.Optional;
 
 public interface PaymentCardCommandService {
-    Optional<PaymentCard> handle(CreatePaymentCardCommand command); // Cambiado a PaymentCard
-    Optional<PaymentCard> handle(UpdatePaymentCardCommand command); // Cambiado a PaymentCard
+    Optional<PaymentCard> handle(CreatePaymentCardCommand command);
+    Optional<PaymentCard> handle(UpdatePaymentCardCommand command);
 }

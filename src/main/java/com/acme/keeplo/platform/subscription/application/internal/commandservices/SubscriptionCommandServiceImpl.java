@@ -28,13 +28,13 @@ import java.util.Optional;
 @Service
 public class SubscriptionCommandServiceImpl implements SubscriptionCommandService {
 
-    private final UserRepository userRepository; // Ahora es tu nuevo UserRepository del IAM
+    private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
     private final PaymentCardRepository paymentCardRepository;
     private final SubscriptionRepository subscriptionRepository;
 
     public SubscriptionCommandServiceImpl(
-            UserRepository userRepository, // Cambiado UsersRepository por UserRepository
+            UserRepository userRepository,
             MembershipRepository membershipRepository,
             PaymentCardRepository paymentCardRepository,
             SubscriptionRepository subscriptionRepository
@@ -47,15 +47,15 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
 
     @Override
     public Optional<Subscription> handle(CreateSubscriptionCommand command) {
-        // 1. Validar y obtener el usuario (de IAM)
+
         var user = userRepository.findById(command.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + command.userId()));
 
-        // 2. Validar y obtener la membresía
+
         var membership = membershipRepository.findById(command.membershipId())
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with ID: " + command.membershipId()));
 
-        // 3. Validar y obtener la tarjeta de pago (si aplica)
+
         PaymentCard paymentCard = null;
         if (!membership.isFree()) {
             if (command.paymentCardId() == null) {
@@ -63,57 +63,47 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
             }
             paymentCard = paymentCardRepository.findById(command.paymentCardId())
                     .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
+
         }
 
-        // 4. Verificar si el usuario ya tiene una suscripción activa (opcional, pero buena práctica)
+
         if (subscriptionRepository.findByUserId(user.getId()).isPresent()) {
             throw new IllegalStateException("User with ID " + user.getId() + " already has an active subscription.");
         }
 
-        // 5. Crear la suscripción
+
         var subscription = new Subscription(membership, paymentCard, user);
-        subscription.validateState(); // Asegura la consistencia antes de guardar
+        subscription.validateState();
 
-        // 6. Guardar la suscripción
         subscriptionRepository.save(subscription);
-
-        // 7. Asociar la suscripción con el usuario (Bidireccional si es necesario)
-        // Esto depende de cómo manejes la relación. Si User no tiene setSubscription(), no es necesario.
-        // user.setSubscription(subscription); // Si User tiene una referencia a Subscription
-        // userRepository.save(user); // Si cambiaste el usuario, guárdalo
 
         return Optional.of(subscription);
     }
 
     @Override
     public Optional<Subscription> handle(UpdateSubscriptionCommand command) {
-        // 1. Obtener la suscripción existente
+
         var existingSubscription = subscriptionRepository.findById(command.subscriptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Subscription not found with ID: " + command.subscriptionId()));
 
-        // 2. Obtener la nueva membresía (puede ser la misma)
+
         var newMembership = membershipRepository.findById(command.membershipId())
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with ID: " + command.membershipId()));
 
-        // 3. Obtener la nueva tarjeta de pago (si aplica y si ha cambiado)
-        PaymentCard newPaymentCard = null;
-        if (!newMembership.isFree()) {
-            if (command.paymentCardId() == null) {
-                throw new IllegalArgumentException("Payment card is required for non-free membership.");
-            }
-            newPaymentCard = paymentCardRepository.findById(command.paymentCardId())
-                    .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
-        } else {
-            // Si la nueva membresía es gratuita, la tarjeta de pago debe ser nula
-            newPaymentCard = null;
-        }
 
-        // 4. Actualizar los campos de la suscripción existente
+        PaymentCard newPaymentCard = null;
+        if (command.paymentCardId() == null) {
+                throw new IllegalArgumentException("Payment card is required for non-free membership.");
+        }
+        newPaymentCard = paymentCardRepository.findById(command.paymentCardId())
+                .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
+
+
+
         existingSubscription.updateMembership(newMembership);
         existingSubscription.updatePaymentCard(newPaymentCard);
         existingSubscription.validateState();
 
-        // 5. Guardar la suscripción actualizada
         subscriptionRepository.save(existingSubscription);
 
         return Optional.of(existingSubscription);

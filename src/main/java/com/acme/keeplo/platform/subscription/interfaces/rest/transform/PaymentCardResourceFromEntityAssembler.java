@@ -7,7 +7,7 @@ public class PaymentCardResourceFromEntityAssembler {
     public static PaymentCardResource toResourceFromEntity(PaymentCard card) {
         return new PaymentCardResource(
                 card.getId(),
-                card.getCardNumber().value(),
+                card.getCardNumber(),
                 card.getHolderName(),
                 card.getExpirationDate(),
                 card.getCvv()

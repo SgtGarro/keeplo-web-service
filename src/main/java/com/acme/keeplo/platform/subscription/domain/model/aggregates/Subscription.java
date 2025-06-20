@@ -18,33 +18,31 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 
 
 @Entity
-// Añade @Getter aquí para generar getters para TODOS los campos, incluyendo 'id'
-// Si solo quieres 'id', puedes poner @Getter sobre private Long id;
 @Getter
-@Setter // Puedes mantener @Setter si lo necesitas para otros fines, aunque el Aggregate Root a menudo evita setters directos para control del dominio.
+@Setter
 public class Subscription extends AbstractAggregateRoot<Subscription> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Este campo ahora tendrá un getter gracias al @Getter a nivel de clase
+    private Long id;
 
-    @ManyToOne // Una membresía puede tener muchas suscripciones
-    @JoinColumn(name = "membership_id", nullable = false) // Asegúrate de que no sea nula
+    @ManyToOne
+    @JoinColumn(name = "membership_id", nullable = false)
     private Memberships membership;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) // Si la tarjeta de pago es exclusiva de esta suscripción
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "payment_card_id", unique = true)
     private PaymentCard paymentCard;
 
-    @OneToOne // Una suscripción le pertenece a un solo usuario
-    @JoinColumn(name = "user_id", unique = true, nullable = false) // Cada usuario tiene una única suscripción activa (o ninguna)
-    private User user; // Referencia a tu entidad User del módulo IAM
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    private User user;
 
-    // Constructor vacío para JPA
-    protected Subscription() { // Cambiado a 'protected' para JPA
+
+    protected Subscription() {
     }
 
-    // Constructor para crear una nueva suscripción
+
     public Subscription(Memberships membership, PaymentCard paymentCard, User user) {
         if (membership == null) throw new IllegalArgumentException("Membership cannot be null");
         if (!membership.isFree() && paymentCard == null)
@@ -56,25 +54,20 @@ public class Subscription extends AbstractAggregateRoot<Subscription> {
         this.user = user;
     }
 
-    // Métodos para actualizar la membresía o la tarjeta de pago
+
     public void updateMembership(Memberships newMembership) {
         if (newMembership == null) throw new IllegalArgumentException("New membership cannot be null");
         this.membership = newMembership;
     }
 
     public void updatePaymentCard(PaymentCard newPaymentCard) {
-        // Validación para asegurarse de que la tarjeta de pago sea nula si la membresía es gratuita
-        if (this.membership.isFree() && newPaymentCard != null) {
-            throw new IllegalArgumentException("Free membership cannot have a payment card.");
-        }
-        // Validación para asegurarse de que la tarjeta de pago no sea nula si la membresía NO es gratuita
+
         if (!this.membership.isFree() && newPaymentCard == null) {
             throw new IllegalArgumentException("Non-free membership requires a payment card.");
         }
         this.paymentCard = newPaymentCard;
     }
 
-    // Método de validación de estado (útil antes de guardar)
     public void validateState() {
         if (membership == null) throw new IllegalStateException("Subscription must have a membership");
         if (!membership.isFree() && paymentCard == null)

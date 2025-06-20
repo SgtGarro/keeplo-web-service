@@ -3,7 +3,6 @@ package com.acme.keeplo.platform.subscription.application.internal.commandservic
 import com.acme.keeplo.platform.subscription.domain.model.commands.paymentCards.CreatePaymentCardCommand;
 import com.acme.keeplo.platform.subscription.domain.model.commands.paymentCards.UpdatePaymentCardCommand;
 import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard; // Import the correct entity
-import com.acme.keeplo.platform.subscription.domain.model.valueObjects.CardNumber;
 import com.acme.keeplo.platform.subscription.domain.services.PaymentCardCommandService;
 import com.acme.keeplo.platform.subscription.infrastructure.persistence.jpa.PaymentCardRepository;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,8 @@ public class PaymentCardCommandServiceImpl implements PaymentCardCommandService 
 
     @Override
     public Optional<PaymentCard> handle(CreatePaymentCardCommand command) {
-        // Create a new PaymentCard instance using the constructor we added
         var newPaymentCard = new PaymentCard(
-                new CardNumber(command.cardNumber()),
+                command.cardNumber(),
                 command.holderName(),
                 command.expirationDate(),
                 command.cvv()
@@ -37,13 +35,12 @@ public class PaymentCardCommandServiceImpl implements PaymentCardCommandService 
     public Optional<PaymentCard> handle(UpdatePaymentCardCommand command) {
         var existingCard = paymentCardRepository.findById(command.cardId());
         if (existingCard.isEmpty()) {
-            return Optional.empty(); // Return empty if the payment card is not found
+            return Optional.empty();
         }
         var cardToUpdate = existingCard.get();
 
-        // Update the existing card using the update method we added
         cardToUpdate.update(
-                new CardNumber(command.cardNumber()),
+                command.cardNumber(),
                 command.holderName(),
                 command.expirationDate(),
                 command.cvv()

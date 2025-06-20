@@ -15,8 +15,8 @@ public class SubscriptionResourceFromEntityAssembler {
                 : null;
 
         return new SubscriptionResource(
-                subscription.getId(), // Añadir el ID
-                subscription.getUser().getId(), // Obtener el ID del usuario de la suscripción
+                subscription.getId(),
+                subscription.getUser().getId(),
                 membershipResource,
                 paymentCardResource
         );
