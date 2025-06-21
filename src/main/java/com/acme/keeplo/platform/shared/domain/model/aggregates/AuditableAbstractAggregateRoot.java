@@ -1,4 +1,3 @@
-
 package com.acme.keeplo.platform.shared.domain.model.aggregates;
 
 import jakarta.persistence.*;
