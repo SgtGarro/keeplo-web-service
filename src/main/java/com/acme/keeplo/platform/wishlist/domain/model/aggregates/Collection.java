@@ -49,7 +49,7 @@ public class Collection extends AuditableAbstractAggregateRoot<Collection> {
     }
 
     @ElementCollection
-    @CollectionTable(name = "wish_tags", joinColumns = @JoinColumn(name = "wish_id"))
+    @CollectionTable(name = "collection_tags", joinColumns = @JoinColumn(name = "collection_id"))
     private Set<Tag> tags = new HashSet<>();
 
     public void addTag(Tag tag) {
