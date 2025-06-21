@@ -4,7 +4,6 @@ import com.acme.keeplo.platform.wishlist.domain.model.queries.GetAllCollectionsQ
 import com.acme.keeplo.platform.wishlist.domain.model.queries.GetCollectionByIdQuery;
 import com.acme.keeplo.platform.wishlist.domain.model.services.CollectionCommandService;
 import com.acme.keeplo.platform.wishlist.domain.model.services.CollectionQueryService;
-import com.acme.keeplo.platform.wishlist.domain.model.valueobjects.CollectionId;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.resources.CollectionResource;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.resources.CreateCollectionResource;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.transform.CollectionResourceFromEntityAssembler;

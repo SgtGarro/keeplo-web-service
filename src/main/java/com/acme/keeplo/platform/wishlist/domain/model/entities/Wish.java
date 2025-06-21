@@ -1,12 +1,14 @@
 package com.acme.keeplo.platform.wishlist.domain.model.entities;
-import jakarta.persistence.Embeddable;
 import com.acme.keeplo.platform.wishlist.domain.model.aggregates.Collection;
 import com.acme.keeplo.platform.shared.domain.model.entities.AuditableModel;
 import com.acme.keeplo.platform.wishlist.domain.model.valueobjects.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,15 +16,18 @@ import java.util.Set;
 public class Wish extends AuditableModel {
 
     private String title;
+    @Setter
     private String description;
+    @Setter
     private String url;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection_id", nullable = false)
     private Collection collection;
     @ElementCollection
     @CollectionTable(name = "wish_tags", joinColumns = @JoinColumn(name = "wish_id"))
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags = new ArrayList<>();
     
 
     protected Wish() {
@@ -34,14 +39,6 @@ public class Wish extends AuditableModel {
         this.url = url;
         this.collection = collection;
     }
-
-    public void setCollection(Collection collection) {
-        this.collection = collection;
-    }
-
-    public void setTitle(String title) { this.title = title; }
-    public void setDescription(String description) { this.description = description; }
-    public void setUrl(String url) { this.url = url; }
 
     public void addTag(Tag tag) {
         this.tags.add(tag);
