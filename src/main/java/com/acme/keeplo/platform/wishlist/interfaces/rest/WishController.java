@@ -76,4 +76,14 @@ public class WishController {
                 .toList();
         return ResponseEntity.ok(resources);
     }
+    @DeleteMapping("/wishes/{wishId}")
+    @Operation(summary = "Eliminar un deseo por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Deseo eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Deseo no encontrado")
+    })
+    public ResponseEntity<Void> deleteWish(@PathVariable Long wishId) {
+        var result = wishCommandService.deleteById(wishId);
+        return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 }

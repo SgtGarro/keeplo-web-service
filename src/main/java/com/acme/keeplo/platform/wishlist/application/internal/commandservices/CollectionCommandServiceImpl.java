@@ -27,4 +27,11 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
         return Optional.of(collection);
     }
 
+    @Override
+    public boolean deleteById(Long id) {
+        if (!collectionRepository.existsById(id)) return false;
+        collectionRepository.deleteById(id);
+        return true;
+    }
+
 }

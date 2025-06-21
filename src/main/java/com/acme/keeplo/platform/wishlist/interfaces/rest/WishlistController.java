@@ -74,6 +74,17 @@ public class WishlistController {
                 .toList();
         return ResponseEntity.ok(resources);
     }
+
+    @DeleteMapping("/{collectionId}")
+    @Operation(summary = "Eliminar una colección por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Colección eliminada exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Colección no encontrada")
+    })
+    public ResponseEntity<Void> deleteCollection(@PathVariable Long collectionId) {
+        var result = collectionCommandService.deleteById(collectionId);
+        return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 }
 
 

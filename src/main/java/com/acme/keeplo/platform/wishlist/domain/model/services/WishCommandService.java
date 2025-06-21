@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface WishCommandService {
     Optional<Wish> handle(AddWishCommand command);
+    boolean deleteById(Long id);
 
 }

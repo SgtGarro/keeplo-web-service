@@ -40,4 +40,13 @@ public class WishCommandServiceImpl implements WishCommandService {
         return Optional.of(wish);
     }
 
+    @Override
+    public boolean deleteById(Long id) {
+        if (!wishRepository.existsById(id)) return false;
+        wishRepository.deleteById(id);
+        return true;
+    }
+
+
+
 }
