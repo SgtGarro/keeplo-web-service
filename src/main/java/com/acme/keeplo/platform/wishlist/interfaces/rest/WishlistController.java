@@ -4,8 +4,10 @@ import com.acme.keeplo.platform.wishlist.domain.model.queries.GetAllCollectionsQ
 import com.acme.keeplo.platform.wishlist.domain.model.queries.GetCollectionByIdQuery;
 import com.acme.keeplo.platform.wishlist.domain.model.services.CollectionCommandService;
 import com.acme.keeplo.platform.wishlist.domain.model.services.CollectionQueryService;
+import com.acme.keeplo.platform.wishlist.interfaces.rest.resources.AddTagToCollectionResource;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.resources.CollectionResource;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.resources.CreateCollectionResource;
+import com.acme.keeplo.platform.wishlist.interfaces.rest.transform.AddTagToCollectionCommandFromResourceAssembler;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.transform.CollectionResourceFromEntityAssembler;
 import com.acme.keeplo.platform.wishlist.interfaces.rest.transform.CreateCollectionCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,6 +86,22 @@ public class WishlistController {
     public ResponseEntity<Void> deleteCollection(@PathVariable Long collectionId) {
         var result = collectionCommandService.deleteById(collectionId);
         return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{collectionId}/tags")
+    @Operation(summary = "Agregar un tag a una colección")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tag agregado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Colección no encontrada")
+    })
+    public ResponseEntity<Void> addTagToCollection(
+            @PathVariable Long collectionId,
+            @RequestBody AddTagToCollectionResource resource) {
+
+        var command = AddTagToCollectionCommandFromResourceAssembler.toCommand(collectionId, resource);
+        boolean result = collectionCommandService.addTagToCollection(command);
+
+        return result ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }
 
