@@ -12,7 +12,6 @@ import java.util.Optional;
  *
  * @summary
  * This interface represents the service to handle v queries.
- * @since 1.0.0
  */
 public interface SubscriptionQueryService {
 

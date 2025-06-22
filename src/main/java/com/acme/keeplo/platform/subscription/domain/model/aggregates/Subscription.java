@@ -1,4 +1,5 @@
 package com.acme.keeplo.platform.subscription.domain.model.aggregates;
+
 /**
  * Subscriptions Aggregate Root
  *
@@ -7,48 +8,102 @@ package com.acme.keeplo.platform.subscription.domain.model.aggregates;
  * It is responsible for handling the CreateSubscriptions command.
  */
 
+import com.acme.keeplo.platform.iam.domain.model.aggregates.User; // Importa tu nueva entidad User
 import com.acme.keeplo.platform.subscription.domain.model.entity.Memberships;
 import com.acme.keeplo.platform.subscription.domain.model.entity.PaymentCard;
-import com.acme.keeplo.platform.users.domain.model.aggregates.Users;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Getter; // Asegúrate de que esta importación esté presente
+import lombok.Setter; // Asegúrate de que esta importación esté presente
 import org.springframework.data.domain.AbstractAggregateRoot;
 
+
 @Entity
+@Getter
+@Setter
 public class Subscription extends AbstractAggregateRoot<Subscription> {
 
+    /**
+     * Unique identifier of the subscription.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
+    /**
+     * Membership associated with the subscription.
+     */
     @ManyToOne
-
+    @JoinColumn(name = "membership_id", nullable = false)
     private Memberships membership;
 
-    @Getter
-    @Setter
-    @OneToOne
+    /**
+     * Payment card used for the subscription, if applicable.
+     */
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "payment_card_id", unique = true)
     private PaymentCard paymentCard;
 
+    /**
+     * User who owns the subscription.
+     */
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    private User user;
 
-    public Subscription() {
+    /**
+     * Protected no-args constructor for JPA.
+     */
+    protected Subscription() {
     }
-    public Subscription(Memberships membership, PaymentCard paymentCard) {
+
+    /**
+     * Creates a new subscription.
+     *
+     * @param membership the membership plan
+     * @param paymentCard the payment card (required for non-free memberships)
+     * @param user the user subscribing
+     */
+    public Subscription(Memberships membership, PaymentCard paymentCard, User user) {
         if (membership == null) throw new IllegalArgumentException("Membership cannot be null");
         if (!membership.isFree() && paymentCard == null)
             throw new IllegalArgumentException("Non-free membership requires a payment card");
+        if (user == null) throw new IllegalArgumentException("User cannot be null for a subscription");
 
         this.membership = membership;
         this.paymentCard = paymentCard;
+        this.user = user;
     }
 
-    public void validate() {
-        if (membership == null) throw new IllegalStateException("Membership cannot be null");
+    /**
+     * Updates the membership associated with the subscription.
+     *
+     * @param newMembership the new membership
+     */
+    public void updateMembership(Memberships newMembership) {
+        if (newMembership == null) throw new IllegalArgumentException("New membership cannot be null");
+        this.membership = newMembership;
+    }
+
+    /**
+     * Updates the payment card associated with the subscription.
+     *
+     * @param newPaymentCard the new payment card
+     */
+    public void updatePaymentCard(PaymentCard newPaymentCard) {
+        if (!this.membership.isFree() && newPaymentCard == null) {
+            throw new IllegalArgumentException("Non-free membership requires a payment card.");
+        }
+        this.paymentCard = newPaymentCard;
+    }
+
+    /**
+     * Validates the current state of the subscription.
+     * Ensures that required fields are present and consistent.
+     */
+    public void validateState() {
+        if (membership == null) throw new IllegalStateException("Subscription must have a membership");
         if (!membership.isFree() && paymentCard == null)
             throw new IllegalStateException("Non-free membership requires a payment card");
+        if (user == null) throw new IllegalStateException("Subscription must be associated with a user");
     }
 }
