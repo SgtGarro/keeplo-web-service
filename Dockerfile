@@ -4,7 +4,7 @@ FROM openjdk:24-jdk
 WORKDIR /app
 
 # Copia los archivos necesarios primero (para aprovechar cache)
-COPY .mvn/ .mvn
+COPY .mvn .mvn
 COPY mvnw pom.xml ./
 
 # Da permisos al wrapper y descarga dependencias
