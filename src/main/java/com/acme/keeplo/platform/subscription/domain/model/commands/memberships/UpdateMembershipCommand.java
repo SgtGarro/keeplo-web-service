@@ -1,5 +1,16 @@
 package com.acme.keeplo.platform.subscription.domain.model.commands.memberships;
 
+/**
+ * Command to update an existing membership.
+ *
+ * Ensures that the membership ID is positive, the name and description are not blank,
+ * and the price is not negative.
+ *
+ * @param membershipId The ID of the membership to be updated.
+ * @param name The updated name of the membership.
+ * @param price The updated price of the membership.
+ * @param description The updated description of the membership.
+ */
 public record UpdateMembershipCommand(
         Long membershipId,
         String name,
