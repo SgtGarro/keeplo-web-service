@@ -1,23 +1,9 @@
+FROM maven:3.9-eclipse-temurin-22-jammy AS build
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Imagen base oficial de Java 17
 FROM openjdk:24-jdk
-
-# Directorio de trabajo dentro del contenedor
-WORKDIR /app
-
-# Copia los archivos necesarios primero (para aprovechar cache)
-COPY .mvn .mvn
-COPY mvnw pom.xml ./
-
-# Da permisos al wrapper y descarga dependencias
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
-
-# Copia el resto del proyecto
-COPY src ./src
-
-# Compila el proyecto
-RUN ./mvnw clean package -DskipTests
-
-# Expone el puerto 8080 (usado por Spring Boot)
+COPY --from=build /target/platform-0.0.1-SNAPSHOT.jar demo.jar
 EXPOSE 8080
-
-# Ejecuta la aplicación y permite que Spring use las variables de entorno inyectadas en tiempo de ejecución
-CMD ["java", "-jar", "target/platform-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "demo.jar"]
