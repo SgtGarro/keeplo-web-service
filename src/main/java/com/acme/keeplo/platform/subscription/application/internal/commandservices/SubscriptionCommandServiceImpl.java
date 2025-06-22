@@ -66,13 +66,12 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with ID: " + command.membershipId()));
 
         PaymentCard paymentCard = null;
-        if (!membership.isFree()) {
-            if (command.paymentCardId() == null) {
+        if (command.paymentCardId() == null) {
                 throw new IllegalArgumentException("Payment card is required for non-free membership.");
             }
-            paymentCard = paymentCardRepository.findById(command.paymentCardId())
+        paymentCard = paymentCardRepository.findById(command.paymentCardId())
                     .orElseThrow(() -> new IllegalArgumentException("Payment card not found with ID: " + command.paymentCardId()));
-        }
+
 
         if (subscriptionRepository.findByUserId(user.getId()).isPresent()) {
             throw new IllegalStateException("User with ID " + user.getId() + " already has an active subscription.");
